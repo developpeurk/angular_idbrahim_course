@@ -1,5 +1,8 @@
 import { PostsService } from './../services/posts.service';
 import { Component, OnInit } from '@angular/core';
+import { Apperror } from '../common/app.error';
+import { NotFoundError } from '../common/not-found-error';
+import { BadInput } from '../common/bad-input';
 
 @Component({
   selector: 'app-posts',
@@ -27,6 +30,9 @@ export class PostsComponent implements OnInit {
   this.postService.getPosts()
           .subscribe(response => {
             this.posts = response;
+          },error =>{
+             alert('erreur innatendu');
+             console.log(error);
           });
     
   }
@@ -34,7 +40,6 @@ export class PostsComponent implements OnInit {
   createPost(){
     this.postService.createPost(this.post)
         .subscribe(response => {
-               this.post.userId = response.id;
                this.posts.unshift(this.post);  
                this.post = {
                 id: 0,
@@ -42,7 +47,15 @@ export class PostsComponent implements OnInit {
                 body: '',
                 userId: 0
                }    
-        })
+        },(error: Apperror) => {
+          if(error instanceof BadInput) {
+            alert('merci de verifier vos informations');
+          }else {
+            alert('erreur inatendu');
+            console.log(error);
+          }
+
+        });
       }
 
       editPost(post){
@@ -59,14 +72,25 @@ export class PostsComponent implements OnInit {
                 userId: 0
                };
                this.status = true;
-            })
+            },error =>{
+              alert('erreur innatendu');
+              console.log(error);
+           });
       };
-      deletePost(post){
-      this.postService.deletePost(post)
+      deletePost(id){
+      this.postService.deletePost(id)
         .subscribe(res =>{
-              let index = this.posts.indexOf(post);
+              let index = this.posts.indexOf(id);
                 this.posts.splice(index,1);
               
-           })
+           }, (error: Apperror) => {
+             if(error instanceof NotFoundError) {
+               alert('ce post est déja supprimé');
+             }else {
+               alert('erreur inatendu');
+               console.log(error);
+             }
+
+           });
       }
 }
