@@ -1,6 +1,4 @@
-import { Apperror } from './app.error';
-export class BadInput extends Apperror{
-  constructor(){
-    super();
-  }
+import { AppError } from './app.error';
+export class BadInput extends AppError{
+ 
 }

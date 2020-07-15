@@ -1,6 +1,6 @@
 import { PostsService } from './../services/posts.service';
 import { Component, OnInit } from '@angular/core';
-import { Apperror } from '../common/app.error';
+import { AppError } from '../common/app.error';
 import { NotFoundError } from '../common/not-found-error';
 import { BadInput } from '../common/bad-input';
 
@@ -27,7 +27,7 @@ export class PostsComponent implements OnInit {
   }
 
   getPosts(){
-  this.postService.getPosts()
+  this.postService.getAll()
           .subscribe(response => {
             this.posts = response;
           },error =>{
@@ -38,7 +38,7 @@ export class PostsComponent implements OnInit {
   }
 
   createPost(){
-    this.postService.createPost(this.post)
+    this.postService.create(this.post)
         .subscribe(response => {
                this.posts.unshift(this.post);  
                this.post = {
@@ -47,7 +47,7 @@ export class PostsComponent implements OnInit {
                 body: '',
                 userId: 0
                }    
-        },(error: Apperror) => {
+        },(error: AppError) => {
           if(error instanceof BadInput) {
             alert('merci de verifier vos informations');
           }else {
@@ -63,7 +63,7 @@ export class PostsComponent implements OnInit {
         this.status = false;
       };
       updatePost(){
-        this.postService.updatePost(this.post)
+        this.postService.update(this.post)
             .subscribe(response => {
               this.post = {
                 id: 0,
@@ -78,12 +78,12 @@ export class PostsComponent implements OnInit {
            });
       };
       deletePost(id){
-      this.postService.deletePost(id)
+      this.postService.delete(id)
         .subscribe(res =>{
               let index = this.posts.indexOf(id);
                 this.posts.splice(index,1);
               
-           }, (error: Apperror) => {
+           }, (error: AppError) => {
              if(error instanceof NotFoundError) {
                alert('ce post est déja supprimé');
              }else {
